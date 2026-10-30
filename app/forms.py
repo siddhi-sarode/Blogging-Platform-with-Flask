@@ -5,6 +5,6 @@ from flask_ckeditor import CKEditorField
 
 from wtforms import TextAreaField
 
-class CommentForm(FlaskForm):
-    body = TextAreaField('Your Comment', validators=[DataRequired()])
-    submit = SubmitField('Post Comment')
+class SearchForm(FlaskForm):
+    q = StringField('Search', validators=[DataRequired()])
+    submit = SubmitField('Search')

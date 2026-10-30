@@ -25,6 +25,10 @@
 <body>
     <div class="navbar">
         <div><strong><a href="/" style="color:white; text-decoration:none;">DIY Blog</a></strong></div>
+        <form action="{{ url_for('main.search') }}" method="GET" style="display: flex; gap: 5px; margin: 0;">
+            <input type="text" name="q" placeholder="Search posts..." style="padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px;" required>
+            <button type="submit" style="padding: 6px 12px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Search</button>
+        </form>
         <div>
             <a href="/">Home</a>
             {% if current_user.is_authenticated %}
@@ -37,17 +41,3 @@
             {% endif %}
         </div>
     </div>
-    
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        
-        {% block content %}{% endblock %}
-    </div>
-</body>
-</html>
