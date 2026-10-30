@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Latest Blog Posts</h2>
+<hr>
+
+{% for post in posts %}
+    <div style="text-align: left; padding: 15px; border: 1px solid #ddd; margin-bottom: 15px; border-radius: 8px; background: #fff;">
+        <h3 style="margin-top: 0;"><a href="{{ url_for('main.post', id=post.id) }}">{{ post.title }}</a></h3>
+        <p style="font-size: 13px; color: #7f8c8d;">
+            By <a href="{{ url_for('main.user', username=post.author.username) }}">{{ post.author.username }}</a> 
+            on {{ post.timestamp.strftime('%B %d, %Y') }}
+        </p>
+        <!-- truncate(200) shortens the preview to 200 characters -->
+        <div style="color: #444;">{{ post.content | striptags | truncate(200) }}</div>
+        <a href="{{ url_for('main.post', id=post.id) }}" style="font-size: 14px; font-weight: bold;">Read more...</a>
+    </div>
+{% else %}
+    <p>No posts have been published yet.</p>
+{% endfor %}
+
+<!-- Pagination Links -->
+<div style="text-align: center; margin-top: 25px;">
+    {% if pagination.has_prev %}
+        <a href="{{ url_for('main.index', page=pagination.prev_num) }}" class="btn" style="width: auto; padding: 8px 15px;">&larr; Newer Posts</a>
+    {% endif %}
+    {% if pagination.has_next %}
+        <a href="{{ url_for('main.index', page=pagination.next_num) }}" class="btn" style="width: auto; padding: 8px 15px;">Older Posts &rarr;</a>
+    {% endif %}
+</div>
+{% endblock %}

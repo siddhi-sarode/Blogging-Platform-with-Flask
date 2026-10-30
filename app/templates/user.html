@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Profile: {{ user.username }}</h2>
+<p style="color: #7f8c8d;">Joined the platform and started writing.</p>
+<hr>
+
+<h3>Posts by {{ user.username }}</h3>
+{% for post in posts %}
+    <div style="text-align: left; padding: 12px; border-bottom: 1px solid #eee; margin-bottom: 10px;">
+        <h4 style="margin: 0;"><a href="{{ url_for('main.post', id=post.id) }}">{{ post.title }}</a></h4>
+        <p style="font-size: 12px; color: #999; margin-top: 5px;">{{ post.timestamp.strftime('%B %d, %Y') }}</p>
+    </div>
+{% else %}
+    <p>This user hasn't written any posts yet.</p>
+{% endfor %}
+
+<!-- Pagination Links -->
+<div style="text-align: center; margin-top: 25px;">
+    {% if pagination.has_prev %}
+        <a href="{{ url_for('main.user', username=user.username, page=pagination.prev_num) }}" class="btn" style="width: auto; padding: 8px 15px;">&larr; Newer</a>
+    {% endif %}
+    {% if pagination.has_next %}
+        <a href="{{ url_for('main.user', username=user.username, page=pagination.next_num) }}" class="btn" style="width: auto; padding: 8px 15px;">Older &rarr;</a>
+    {% endif %}
+</div>
+{% endblock %}

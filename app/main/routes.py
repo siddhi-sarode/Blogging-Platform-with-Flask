@@ -5,11 +5,25 @@ from app.models import User, Post, Tag
 from app.forms import PostForm
 from app import db
 
+# --- NEW: Public Home Page with Pagination ---
 @bp.route('/')
+@bp.route('/index')
 def index():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.dashboard'))
-    return redirect(url_for('main.login'))
+    # Get the page number from the URL (defaults to 1)
+    page = request.args.get('page', 1, type=int)
+    # Fetch posts, order by newest, and paginate (5 posts per page)
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page=page, per_page=5, error_out=False)
+    return render_template('index.html', posts=pagination.items, pagination=pagination)
+
+# --- NEW: User Profile Page with Pagination ---
+@bp.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    # Paginate only the specific user's posts
+    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(page=page, per_page=5, error_out=False)
+    return render_template('user.html', user=user, posts=pagination.items, pagination=pagination)
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -42,21 +56,17 @@ def login():
 @bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('main.login'))
-
-# --- NEW CRUD ROUTES BELOW ---
+    return redirect(url_for('main.index'))
 
 @bp.route('/dashboard')
 @login_required
 def dashboard():
-    # Read: Fetch all posts by the logged-in user
     posts = current_user.posts.order_by(Post.timestamp.desc()).all()
     return render_template('dashboard.html', posts=posts)
 
 @bp.route('/post/new', methods=['GET', 'POST'])
 @login_required
 def new_post():
-    # Create: Make a new post
     form = PostForm()
     if form.validate_on_submit():
         post = Post(title=form.title.data, content=form.content.data, author=current_user)
@@ -64,8 +74,7 @@ def new_post():
         for name in tag_names:
             if name:
                 tag = Tag.query.filter_by(name=name).first()
-                if not tag:
-                    tag = Tag(name=name)
+                if not tag: tag = Tag(name=name)
                 post.tags.append(tag)
         db.session.add(post)
         db.session.commit()
@@ -75,18 +84,15 @@ def new_post():
 
 @bp.route('/post/<int:id>')
 def post(id):
-    # Read: View a single post
     post = db.session.get(Post, id)
     return render_template('post_detail.html', post=post)
 
 @bp.route('/post/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_post(id):
-    # Update: Edit an existing post
     post = db.session.get(Post, id)
     if post.author != current_user:
         return redirect(url_for('main.dashboard'))
-    
     form = PostForm()
     if form.validate_on_submit():
         post.title = form.title.data
@@ -110,7 +116,6 @@ def edit_post(id):
 @bp.route('/post/<int:id>/delete', methods=['POST'])
 @login_required
 def delete_post(id):
-    # Delete: Remove a post
     post = db.session.get(Post, id)
     if post and post.author == current_user:
         db.session.delete(post)
