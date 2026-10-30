@@ -1,2 +1,2 @@
 # Blogging-Platform-with-Flask
-DIY internship project
+"Starting my DIY Internship project."
