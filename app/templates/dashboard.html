@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Dashboard</h2>
+<div class="dashboard-content">
+    <p>Welcome to your account, <strong>{{ current_user.username }}</strong>!</p>
+    <p>You have successfully logged in.</p>
+</div>
+{% endblock %}
