@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ 'Edit' if edit_mode else 'Create New' }} Post</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.title.label }}<br>
+        {{ form.title(style="width: 100%; padding: 8px;") }}
+    </div>
+    <div class="form-group">
+        {{ form.tags.label }}<br>
+        {{ form.tags(style="width: 100%; padding: 8px;", placeholder="e.g. tech, python, coding") }}
+    </div>
+    <div class="form-group">
+        {{ form.content.label }}<br>
+        {{ form.content() }}
+    </div>
+    {{ form.submit(class="btn") }}
+</form>
+{{ ckeditor.load() }}
+{% endblock %}

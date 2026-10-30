@@ -1,9 +1,23 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h2>Dashboard</h2>
+<h2>Your Dashboard</h2>
 <div class="dashboard-content">
-    <p>Welcome to your account, <strong>{{ current_user.username }}</strong>!</p>
-    <p>You have successfully logged in.</p>
+    <p>Welcome, <strong>{{ current_user.username }}</strong>!</p>
+    <a href="{{ url_for('main.new_post') }}" class="btn" style="display:inline-block; margin-bottom:20px;">Create New Post</a>
+    
+    <hr>
+    <h3>Your Posts</h3>
+    {% for post in posts %}
+        <div style="text-align: left; padding: 15px; border: 1px solid #ddd; margin-bottom: 10px; border-radius: 5px;">
+            <h4><a href="{{ url_for('main.post', id=post.id) }}">{{ post.title }}</a></h4>
+            <p>Tags: {% for tag in post.tags %}<span style="background:#eee; padding:2px 5px; border-radius:3px; font-size:12px;">{{ tag.name }}</span> {% endfor %}</p>
+            <a href="{{ url_for('main.edit_post', id=post.id) }}" style="color: #f39c12; font-size: 14px;">Edit</a> | 
+            <form action="{{ url_for('main.delete_post', id=post.id) }}" method="POST" style="display:inline;">
+                <button type="submit" style="color: #e74c3c; border:none; background:none; cursor:pointer; font-size: 14px; text-decoration: underline;">Delete</button>
+            </form>
+        </div>
+    {% else %}
+        <p>You haven't written any posts yet.</p>
+    {% endfor %}
 </div>
 {% endblock %}

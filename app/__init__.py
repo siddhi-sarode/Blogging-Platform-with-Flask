@@ -2,12 +2,14 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_ckeditor import CKEditor
 from config import Config
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 login_manager.login_view = 'main.login'
+ckeditor = CKEditor()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -16,6 +18,7 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+    ckeditor.init_app(app)
 
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
